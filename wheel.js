@@ -14,21 +14,16 @@ function loopOptions(i) {
 		if (i == 20) {
 			i = 0
 		}
-		setTimeout(clearInterval, rollTime-20, interval)
+		setTimeout(clearInterval, rollTime, interval)
 	}, 100);
 }
 
 function rolDice() {
 	disableButton()
-	var number=Math.floor(Math.random() * (options.length ))
 	loopOptions(Math.floor(Math.random() * (options.length )))
-	setTimeout(updatePage, rollTime, options[number])
+	var picked=document.getElementById("box").innerHTML
 	setTimeout(enableButton, rollTime)
-	setTimeout(updateHistory, rollTime, options[number])
-}
-
-function updatePage(p1) {
-	document.getElementById("box").innerHTML = p1
+	setTimeout(updateHistory, rollTime, picked)
 }
 
 function disableButton() {
