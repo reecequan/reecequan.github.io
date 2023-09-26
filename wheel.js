@@ -23,7 +23,7 @@ function rolDice() {
 	loopOptions(Math.floor(Math.random() * (options.length )))
 	var picked=document.getElementById("box").innerHTML
 	setTimeout(enableButton, rollTime)
-	setTimeout(updateHistory, rollTime, picked)
+	updateHistory(picked)
 }
 
 function disableButton() {
