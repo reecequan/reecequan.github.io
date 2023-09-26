@@ -45,8 +45,15 @@ function enableButton() {
 
 function updateHistory(option) {
 	var historyEl=document.getElementById("historyValues")
+	pruneHistory()
+	if (option != undefined) {
+		history.unshift(option)
+	}
+	publishHistory()
+	saveHistory()
+}
 
-	history.unshift(option)
+function publishHistory() {
 	var historyValue=""
 	for (value in history) {
 		if (value == 0 ) {
@@ -55,25 +62,32 @@ function updateHistory(option) {
 			historyValue=historyValue+"<br>"+ history[value]
 		}
 	}
-	historyEl.innerHTML=historyValue
+	document.getElementById("historyValues").innerHTML=historyValue
 	saveHistory()
 }
 
-function prunHistory() {
+function pruneHistory() {
 	while (history.length >= 5 ) {
 		history.pop()
 	}
 }
 
 function loadHistoryFromCookie() {
-	history.concat(document.cookie.match("history"))
+	var historyStuff = getHistoryFromCokokie().split(",")
+	for(entrie in historyStuff) {
+		updateHistory(historyStuff[entrie])
+	}
+
 }
+
+function getHistoryFromCokokie() {
+	return document.cookie.match("(^|;)\\s*history\\s*=\\s*([^;]+)").pop() || []
+} 
 
 function saveHistory() {
 	var t="history="+history
-	console.log(t)
 	document.cookie = "history="+history
 }
 
-loadHistoryFromCookie()
+window.onload = loadHistoryFromCookie()
 
