@@ -1,4 +1,4 @@
-const options=["Creamy Pasta & Garlic Bread", "Black Bean Tacos", "Cauliflour Curry & Bread", "Nugs and Chips", "Jacket & Filling", "Enchaladas", "Pie & Mash", "Lentil Spagbol", "5 Bean Chilli & Rice", "Mushroom Risotto", "Buritto Bowl", "Burgers", "Soup & Bread", "Sausage, Egg, Chips & Beans", "Veg Stew & Dumplings" , "Sunday Lunch" , "Fried Rice" , "Pasta bake & Garlic bread" , "Stirfry or Noodles" ,"Pizza" ];
+const options=["Creamy Pasta & Garlic Bread", "Black Bean Tacos", "Cauliflour Curry & Bread", "Nugs and Chips", "Jacket & Filling", "Enchaladas", "Pie & Mash", "Lentil Spagbol", "5 Bean Chilli & Rice", "Mushroom Risotto", "Buritto Bowl", "Burgers", "Soup & Bread", "Sausage Egg Chips & Beans", "Veg Stew & Dumplings" , "Sunday Lunch" , "Fried Rice" , "Pasta bake & Garlic bread" , "Stirfry or Noodles" ,"Pizza" ];
 
 const el = document.getElementById("box");
 const history=[]
@@ -74,8 +74,8 @@ function pruneHistory() {
 
 function loadHistoryFromCookie() {
 	var historyStuff = getHistoryFromCokokie().split(",")
-	for(entrie in historyStuff) {
-		updateHistory(historyStuff[entrie])
+	for(var i = historyStuff.length ; i >= 0 ; --i ) {
+		updateHistory(historyStuff[i])
 	}
 
 }
