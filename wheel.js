@@ -73,7 +73,11 @@ function pruneHistory() {
 }
 
 function loadHistoryFromCookie() {
-	var historyStuff = getHistoryFromCokokie().split(",")
+	var historyStuff = getHistoryFromCokokie()
+	if (historyStuff === undefined) {
+		return
+	}
+	historyStuff = historyStuff.split(",")
 	for(var i = historyStuff.length ; i >= 0 ; --i ) {
 		updateHistory(historyStuff[i])
 	}
@@ -81,7 +85,7 @@ function loadHistoryFromCookie() {
 }
 
 function getHistoryFromCokokie() {
-	return document.cookie.match("(^|;)\\s*history\\s*=\\s*([^;]+)").pop() || []
+	return document.cookie.match("(^|;)\\s*history\\s*=\\s*([^;]+)")?.pop() || undefined
 } 
 
 function saveHistory() {
