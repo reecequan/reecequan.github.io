@@ -1,0 +1,74 @@
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  padding: 20px;
+  gap: 30px;
+}
+
+#left, #right {
+  flex: 1;
+  border: 2px dashed #ccc;
+  padding: 15px;
+  min-height: 600px;
+  overflow-y: auto;
+}
+
+.draggable {
+  background: #f0f0f0;
+  margin: 5px 0;
+  padding: 8px;
+  cursor: move;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.slot {
+  height: 80px;
+  margin: 5px;
+  background: #e0e0e0;
+  border: 2px dashed #999;
+  border-radius: 6px;
+  flex: 1;
+  min-width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.slot-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.line-label {
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+.layout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.collapsible-group {
+  margin-top: 15px;
+}
+
+.toggle-button {
+  width: 100%;
+  padding: 5px;
+  background: #ddd;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-weight: bold;
+}
+
+.group-content {
+  padding: 5px;
+}

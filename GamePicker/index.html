@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Team Organizer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="left">
+    <h3>Draggable Players</h3>
+    <input type="file" id="csvFile" accept=".csv" />
+
+    <div class="collapsible-group" data-group="Forward">
+      <button class="toggle-button">Forward ▼</button>
+      <div id="group-Forward" class="group-content"></div>
+    </div>
+    <div class="collapsible-group" data-group="Defense">
+      <button class="toggle-button">Defense ▼</button>
+      <div id="group-Defense" class="group-content"></div>
+    </div>
+    <div class="collapsible-group" data-group="Either">
+      <button class="toggle-button">Either ▼</button>
+      <div id="group-Either" class="group-content"></div>
+    </div>
+    <div class="collapsible-group" data-group="Goal">
+      <button class="toggle-button">Goal ▼</button>
+      <div id="group-Goal" class="group-content"></div>
+    </div>
+  </div>
+
+  <div id="right">
+    <div class="layout-header">
+      <h3>Team Layout</h3>
+      <button id="lockToggle">Lock</button>
+      <button id="copyTeam" style="display: none;">Copy Team</button>
+    </div>
+
+    <div class="line-label">Goal</div>
+    <div class="slot-row"><div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div></div>
+
+    <div class="line-label">Line 1</div>
+    <div class="slot-row">
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+    <div class="slot-row">
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+
+    <div class="line-label">Line 2</div>
+    <div class="slot-row">
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+    <div class="slot-row">
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+
+    <div class="line-label">Line 3</div>
+    <div class="slot-row">
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+    <div class="slot-row">
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
