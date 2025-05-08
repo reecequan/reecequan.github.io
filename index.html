@@ -2,87 +2,17 @@
 <html>
 <head>
 <title>Team Sorter</title>
-  <style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    padding: 40px 20px;
-  }
-
-  .container {
-    max-width: 800px;
-    width: 100%;
-    background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 28px;
-    color: #222;
-  }
-
-  h2 {
-    margin-top: 40px;
-    font-size: 20px;
-    color: #444;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 5px;
-  }
-
-  ul {
-    list-style-type: none;
-    padding-left: 0;
-  }
-
-  li {
-    padding: 6px 10px;
-    margin: 3px 0;
-    background: #f9f9f9;
-    border-radius: 6px;
-    transition: background 0.3s;
-    cursor: pointer;
-  }
-
-  li:hover {
-    background: #e0f7fa;
-  }
-
-  li.missing {
-    font-style: italic;
-    color: #c62828;
-  }
-
-  #toast {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #333;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 8px;
-    z-index: 1000;
-    font-size: 14px;
-  }
-</style>
-
-
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 <div class="container">
   <h1>Upload CSV</h1>
-  <input type="file" id="csvFile" accept=".csv" />
-  <button onclick="processCSV()">Process File</button>
+  <div class="button-group">
+	  <input type="file" id="csvFile" accept=".csv" />
+	  <button onclick="processCSV()">Process File</button>
+  </div>
+
 
   <h2 id="group1Header">Group 1</h2>
   <ul id="group1"></ul>
