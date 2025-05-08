@@ -7,7 +7,25 @@
 
 <body>
 <div class="container">
+
   <h1>Upload CSV</h1>
+  <p style="text-align: center; margin-top: -20px;">
+  <a href="#" onclick="showHelp()" style="font-size: 14px;">How to use this?</a>
+  </p>
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeHelp()">&times;</span>
+      <h3>How to Use</h3>
+      <ol>
+        <li>Go to the training slot in <a href="https://thesheffieldicetigers.teamapp.com/clubs/892281/events?_list=v1&team_id=1043155" target="_blank">the team app</a>.</li>
+        <li>Click on the <strong>Yes</strong> responses.<br><img src="img/yesClick.jpg" alt="Yes Click" /></li>
+        <li>Click the <strong>three dots</strong>.<br><img src="img/3DotsClick.jpg" alt="Three Dots Click" /></li>
+        <li>Click <strong>CSV report</strong>.<br><img src="img/csvClick.jpg" alt="CSV Click" /></li>
+        <li>Click <strong>Download</strong>.<br><img src="img/downloadClick.jpg" alt="Download Click" /></li>
+      </ol>
+    </div>
+  </div>
+
   <div class="button-group">
 	  <input type="file" id="csvFile" accept=".csv" />
 	  <button onclick="processCSV()">Process File</button>
