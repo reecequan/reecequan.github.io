@@ -1,0 +1,36 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.rounds-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.rounds-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  vertical-align: top;
+  min-width: 150px;
+  text-align: left;
+}
+
+.round-info {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  text-align: center;
+}
+
+.player-card {
+  background-color: #e7f3ff;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: move;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+.player-card:hover {
+  background-color: #d1eaff;
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hockey Draft Organizer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Hockey Draft Organizer</h1>
+
+  <label for="roundSize">Select round size (4–12):</label>
+  <select id="roundSize">
+  	<option value="4">4</option>
+  	<option value="5">5</option>
+  	<option value="6">6</option>
+  	<option value="7">7</option>
+  	<option value="8">8</option>
+  </select>
+
+  <br><br>
+  <input type="file" id="fileInput" accept=".csv" />
+
+  <div id="roundsContainer"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
