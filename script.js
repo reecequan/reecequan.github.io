@@ -206,7 +206,7 @@ async function processCSV() {
   const reader = new FileReader();
   reader.onload = function(e) {
     const lines = e.target.result.split('\n').map(l => l.trim()).filter(Boolean);
-    const names = lines.slice(1).map(line => normalizeName(line.split(',')[3]));
+    const names = lines.slice(1).map(line => normalizeName(line.split(',')[0]));
     const allPlayers = [];
     const goalies = [];
 
