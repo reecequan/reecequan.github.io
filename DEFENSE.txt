@@ -1,4 +1,3 @@
-Billy Schwenzer, 7
 Samuel Cresswell, 4
 Dale Vella, 7
 Jessica Hughes, 3
@@ -16,3 +15,4 @@ Tom Carby, 4
 Rob Wilson, 4
 Sam Cooper, 6
 Luke Ryalls, 5
+Dylan Bonsall, 6
