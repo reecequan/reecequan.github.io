@@ -7,7 +7,7 @@ class Player {
   constructor(name, skill, position, jerseySize) {
     this.name = name;
     this.skill = parseInt(skill);
-    this.position = position.toLowerCase();
+    this.position = position;
     this.jerseySize = jerseySize;
   }
 
@@ -27,36 +27,47 @@ class Round {
   }
 
   render(index) {
-    const div = document.createElement('div');
-    div.className = 'round';
-    div.setAttribute('draggable', true);
-    div.dataset.roundIndex = index;
+    const row = document.createElement('tr');
+    row.setAttribute('draggable', true);
+    row.dataset.roundIndex = index;
 
-    div.innerHTML = `<h3>Round ${index + 1} - ${this.type}</h3>`;
+    // Round info cell
+    const roundInfoCell = document.createElement('td');
+    roundInfoCell.className = 'round-info';
+    roundInfoCell.innerHTML = `<strong>Round ${index + 1}</strong><br>${this.type}`;
+    row.appendChild(roundInfoCell);
 
+    // Player cells
     this.players.forEach((player, playerIndex) => {
-      const card = document.createElement('div');
-      card.className = 'player-card';
-      card.textContent = `${player.name} (Skill: ${player.skill}, ${player.position}, Size: ${player.jerseySize})`;
-      card.setAttribute('draggable', true);
-      card.dataset.roundIndex = index;
-      card.dataset.playerIndex = playerIndex;
+      const cell = document.createElement('td');
+      cell.className = 'player-card';
+      cell.setAttribute('draggable', true);
+      cell.dataset.roundIndex = index;
+      cell.dataset.playerIndex = playerIndex;
 
-      // Player-level drag
-      card.addEventListener('dragstart', handlePlayerDragStart);
-      card.addEventListener('dragover', handleDragOver);
-      card.addEventListener('drop', handlePlayerDrop);
+      cell.innerHTML = `
+        <div><strong>${player.name}</strong></div>
+        <div>Skill: ${player.skill}</div>
+        <div>Pos: ${player.position}</div>
+        <div>Size: ${player.jerseySize}</div>
+      `;
 
-      div.appendChild(card);
+      // Event listeners
+      cell.addEventListener('dragstart', handlePlayerDragStart);
+      cell.addEventListener('dragover', handleDragOver);
+      cell.addEventListener('drop', handlePlayerDrop);
+
+      row.appendChild(cell);
     });
 
-    // Round-level drag
-    div.addEventListener('dragstart', handleRoundDragStart);
-    div.addEventListener('dragover', handleDragOver);
-    div.addEventListener('drop', handleRoundDrop);
+    // Drag events for whole round
+    row.addEventListener('dragstart', handleRoundDragStart);
+    row.addEventListener('dragover', handleDragOver);
+    row.addEventListener('drop', handleRoundDrop);
 
-    return div;
+    return row;
   }
+
 
 
 }
@@ -65,47 +76,62 @@ class DraftOrganizer {
   constructor() {
     this.players = [];
     this.rounds = [];
-    this.roundSize = 4; // Default, can be changed
+    this.roundSize = 6;
   }
 
-  processFile() {
-    const fileInput = document.getElementById('fileInput');
-    const file = fileInput.files[0];
+ sortPlayersIntoRounds() {
+  const roundSize = this.roundSize;
 
-    if (!file) return alert('Please select a file.');
+  // Separate goalies from others
+  const goalies = this.players.filter(p => p.position.toLowerCase() === 'goalie');
+  const others = this.players.filter(p => p.position.toLowerCase() !== 'goalie');
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const lines = e.target.result.trim().split('\n');
-      this.players = lines.map(line => {
-        const [name, skill, position, jerseySize] = line.split(',');
-        return new Player(name, skill, position, jerseySize);
-      });
-
-      this.sortPlayersIntoRounds();
-      this.renderRounds();
-    };
-
-    reader.readAsText(file);
+  // Fill non-goalie rounds
+  let currentRound = new Round('mixed');
+  for (const player of others) {
+    currentRound.addPlayer(player);
+    if (currentRound.players.length === roundSize) {
+      this.rounds.push(currentRound);
+      currentRound = new Round('mixed');
+    }
   }
 
-  sortPlayersIntoRounds() {
-    this.rounds = [];
-
-    const forwards = this.players.filter(p => p.canPlay('forward') && p.position !== 'defence');
-    const defencemen = this.players.filter(p => p.canPlay('defence') && p.position !== 'forward');
-    const goalies = this.players.filter(p => p.position === 'goalie');
-
-    forwards.sort((a, b) => b.skill - a.skill);
-    defencemen.sort((a, b) => b.skill - a.skill);
-    goalies.sort((a, b) => b.skill - a.skill);
-
-    // Assign goalies (they are separate)
-    this.assignToRounds(goalies, 'goalie');
-
-    // Merge logic for forward and defence
-    this.assignBalancedRounds(forwards, defencemen);
+  // If leftover players and a partial round is not allowed
+  if (currentRound.players.length > 0) {
+    // Try to move players into existing rounds if not full
+    for (const player of currentRound.players) {
+      let added = false;
+      for (const round of this.rounds) {
+        if (round.players.length < roundSize) {
+          round.addPlayer(player);
+          added = true;
+          break;
+        }
+      }
+      if (!added) {
+        const lastResort = new Round('mixed');
+        lastResort.addPlayer(player);
+        this.rounds.push(lastResort);
+      }
+    }
   }
+
+  // Handle goalie rounds separately
+  let goalieRound = new Round('goalie');
+  for (const goalie of goalies) {
+    goalieRound.addPlayer(goalie);
+    if (goalieRound.players.length === roundSize) {
+      this.rounds.push(goalieRound);
+      goalieRound = new Round('goalie');
+    }
+  }
+
+  // Add any remaining goalies as a final smaller round
+  if (goalieRound.players.length > 0) {
+    this.rounds.push(goalieRound);
+  }
+}
+
 
   assignBalancedRounds(forwards, defencemen) {
   while (forwards.length > 0 || defencemen.length > 0) {
@@ -148,18 +174,95 @@ class DraftOrganizer {
     }
   }
 
-  renderRounds() {
-    const container = document.getElementById('roundsContainer');
-    container.innerHTML = '';
+renderRounds() {
+  const container = document.getElementById('roundsContainer');
+  container.innerHTML = '';
 
-    this.rounds.forEach((round, index) => {
-      const roundDiv = round.render(index);
-      container.appendChild(roundDiv);
+  const table = document.createElement('table');
+  table.className = 'rounds-table';
+
+  this.rounds.forEach((round, index) => {
+    const row = document.createElement('tr');
+    row.setAttribute('draggable', true);
+    row.dataset.roundIndex = index;
+
+    const roundCell = document.createElement('td');
+    roundCell.className = 'round-info';
+    roundCell.innerHTML = `<strong>Round ${index + 1}</strong><br>${round.type}`;
+    row.appendChild(roundCell);
+
+    round.players.forEach((player, playerIndex) => {
+      const cell = document.createElement('td');
+      cell.className = 'player-card';
+      cell.setAttribute('draggable', true);
+      cell.dataset.roundIndex = index;
+      cell.dataset.playerIndex = playerIndex;
+
+      cell.innerHTML = `
+        <div><strong>${player.name}</strong></div>
+        <div>Skill: ${player.skill}</div>
+        <div>Pos: ${player.position}</div>
+        <div>Size: ${player.jerseySize}</div>
+      `;
+
+      cell.addEventListener('dragstart', handlePlayerDragStart);
+      cell.addEventListener('dragover', handleDragOver);
+      cell.addEventListener('drop', handlePlayerDrop);
+
+      row.appendChild(cell);
     });
-  }
+
+    // Round-level drag-and-drop
+    row.addEventListener('dragstart', handleRoundDragStart);
+    row.addEventListener('dragover', handleDragOver);
+    row.addEventListener('drop', handleRoundDrop);
+
+    table.appendChild(row);
+  });
+
+  container.appendChild(table);
 }
 
-const draftOrganizer = new DraftOrganizer();
+  
+}
+
+function processFile() {
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    const roundSize = parseInt(document.getElementById('roundSize').value);
+
+
+    if (!file) return alert('Please select a file.');
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+    const headerIndex = jsonData.findIndex(row => row['Name'] && row['Skill Ranking']);
+    const validRows = jsonData.slice(headerIndex); // Skip empty lines and junk
+
+    const players = validRows.map(row => new Player(
+      row['Name'],
+      row['Skill Ranking'],
+      row['Position'],
+      row['Beer'],
+      row['Gender'],
+      row['Highest level played'],
+      row['Notes']
+    ));
+
+    draftOrganizer = new DraftOrganizer(players, roundSize);
+    draftOrganizer.sortPlayersIntoRounds();
+    draftOrganizer.renderRounds();
+  };
+
+  reader.readAsArrayBuffer(file);
+}
+
 function handleDragStart(e) {
   draggedPlayer = e.target;
   draggedFromRoundIndex = parseInt(e.target.dataset.roundIndex);

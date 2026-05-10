@@ -18,10 +18,12 @@
   </select>
 
   <br><br>
-  <input type="file" id="fileInput" accept=".csv" />
+  <input type="file" id="fileInput" accept=".xslx" />
+  <button onclick="processFile()">Process File</button>
 
   <div id="roundsContainer"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

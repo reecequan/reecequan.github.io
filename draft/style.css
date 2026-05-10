@@ -34,3 +34,31 @@ body {
 .player-card:hover {
   background-color: #d1eaff;
 }
+
+.rounds-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.rounds-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  vertical-align: top;
+  min-width: 160px;
+}
+
+.round-info {
+  background-color: #f0f0f0;
+  text-align: center;
+  font-weight: bold;
+  width: 140px;
+}
+
+.player-card {
+  background-color: #e7f3ff;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: move;
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+}
