@@ -170,6 +170,22 @@ function openSwapModal(team = "home") {
   openModal(els.swapModal);
 }
 
+function populateClockSelect(select, min, max, placeholder) {
+  select.innerHTML = `<option value="">${placeholder}</option>`;
+  for (let i = min; i <= max; i++) {
+    const value = String(i).padStart(2, "0");
+    const opt = document.createElement("option");
+    opt.value = value;
+    opt.textContent = value;
+    select.appendChild(opt);
+  }
+}
+
+function initClockSelects() {
+  populateClockSelect(els.gameMinutes, 0, 19, "MM");
+  populateClockSelect(els.gameSeconds, 0, 59, "SS");
+}
+
 function initPage() {
   document.getElementById("penaltyOffence").innerHTML = PENALTY_TYPES.map(
     (p) => `<option value="${p.abbreviation}">${p.abbreviation} — ${p.description}</option>`
@@ -183,25 +199,21 @@ function initPage() {
     ([k, v]) => `<option value="${k}">${k} — ${v}</option>`
   ).join("");
 
+  initClockSelects();
+
   els.period.value = String(state.settings.period);
   els.clockDirection.value = state.settings.clockDirection;
   if (state.settings.gameTime) {
-    const { minutes, seconds } = splitArenaTime(state.settings.gameTime);
-    els.gameMinutes.value = minutes;
-    els.gameSeconds.value = seconds;
+    setClockFields(state.settings.gameTime);
   }
-  updateGameTimeMax();
 
   els.period.addEventListener("change", () => {
     state.settings.period = els.period.value === "OT" ? "OT" : Number(els.period.value);
-    updateGameTimeMax();
     saveGameTimeFromFields();
   });
 
   els.gameMinutes.addEventListener("change", saveGameTimeFromFields);
   els.gameSeconds.addEventListener("change", saveGameTimeFromFields);
-  els.gameMinutes.addEventListener("input", saveGameTimeFromFields);
-  els.gameSeconds.addEventListener("input", saveGameTimeFromFields);
 
   els.clockDirection.addEventListener("change", () => {
     state.settings.clockDirection = els.clockDirection.value;
@@ -247,12 +259,10 @@ function saveGameTimeFromFields() {
 
 function setClockFields(time) {
   const { minutes, seconds } = splitArenaTime(time);
-  els.gameMinutes.value = minutes;
-  els.gameSeconds.value = seconds;
-}
-
-function updateGameTimeMax() {
-  els.gameMinutes.max = els.period.value === "OT" ? 59 : 20;
+  const m = Math.min(19, Math.max(0, Number(minutes) || 0));
+  const s = Math.min(59, Math.max(0, Number(seconds) || 0));
+  els.gameMinutes.value = String(m).padStart(2, "0");
+  els.gameSeconds.value = String(s).padStart(2, "0");
 }
 
 function getCurrentPeriodTime() {
@@ -479,7 +489,6 @@ els.eventLog.addEventListener("click", (e) => {
     setClockFields(event.time);
     state.settings.period = event.period;
     state.settings.gameTime = event.time;
-    updateGameTimeMax();
 
     if (event.type === "goal") {
       activeTeam = event.team;
