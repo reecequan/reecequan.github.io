@@ -9,16 +9,45 @@ import {
   MAX_GOALIES
 } from "./roster.js";
 
+const TEAMS = [
+  "Don Valley Vikings",
+  "Peterborough Dynamo",
+  "Whitley Bay Islanders",
+  "Blackburn Falcons",
+  "Kingston Cobras",
+  "Leeds Lightning A",
+  "Newcastle Predators",
+  "Grimsby Stormers",
+  "Leeds Lightning",
+  "Hull Knights",
+  "Leeds Warriors",
+  "Sheffield Blazers",
+  "Sheffield Ice Tigers",
+  "Blackburn Buccaneers",
+  "Durham Dragons",
+  "Kingston Fat Dads",
+  "Tyneside Jesters",
+  "Beighton Bombers",
+  "Telford Spartans"
+];
+
+const COMPETITIONS = ["Challenge", "IHSC"];
+
+const CUSTOM_VALUE = "__custom__";
+
 let state = loadState();
 let editingId = { home: null, away: null };
 
 const els = {
-  homeTeam: document.getElementById("homeTeam"),
-  awayTeam: document.getElementById("awayTeam"),
+  homeTeamSelect: document.getElementById("homeTeamSelect"),
+  homeTeamCustom: document.getElementById("homeTeamCustom"),
+  awayTeamSelect: document.getElementById("awayTeamSelect"),
+  awayTeamCustom: document.getElementById("awayTeamCustom"),
   date: document.getElementById("date"),
   time: document.getElementById("time"),
   venue: document.getElementById("venue"),
-  competition: document.getElementById("competition"),
+  competitionSelect: document.getElementById("competitionSelect"),
+  competitionCustom: document.getElementById("competitionCustom"),
   homeRoster: document.getElementById("homeRoster"),
   awayRoster: document.getElementById("awayRoster"),
   homeForm: document.getElementById("homeForm"),
@@ -35,9 +64,80 @@ const els = {
   cancelGoalies: document.getElementById("cancelGoalies")
 };
 
+function populateChoiceSelect(select, options, { placeholder = "— Select —", required = false } = {}) {
+  select.innerHTML = "";
+  const blank = document.createElement("option");
+  blank.value = "";
+  blank.textContent = placeholder;
+  select.appendChild(blank);
+
+  options.forEach((label) => {
+    const opt = document.createElement("option");
+    opt.value = label;
+    opt.textContent = label;
+    select.appendChild(opt);
+  });
+
+  const custom = document.createElement("option");
+  custom.value = CUSTOM_VALUE;
+  custom.textContent = "Not listed";
+  select.appendChild(custom);
+
+  if (required) select.required = true;
+}
+
+function setCustomFieldVisible(input, visible) {
+  input.hidden = !visible;
+  input.disabled = !visible;
+  input.required = visible;
+  if (!visible) input.value = "";
+}
+
+function syncChoiceField(select, input, options, stateKey) {
+  const saved = state.details[stateKey] || "";
+  if (options.includes(saved)) {
+    select.value = saved;
+    setCustomFieldVisible(input, false);
+  } else if (saved) {
+    select.value = CUSTOM_VALUE;
+    input.value = saved;
+    setCustomFieldVisible(input, true);
+  } else {
+    select.value = "";
+    setCustomFieldVisible(input, false);
+  }
+}
+
+function bindChoiceField(select, input, options, stateKey, { required = false } = {}) {
+  populateChoiceSelect(select, options, { required });
+  syncChoiceField(select, input, options, stateKey);
+
+  const save = () => {
+    if (select.value === CUSTOM_VALUE) {
+      state.details[stateKey] = input.value.trim();
+    } else {
+      state.details[stateKey] = select.value;
+    }
+    saveState(state);
+    updateStartButton();
+  };
+
+  select.addEventListener("change", () => {
+    const isCustom = select.value === CUSTOM_VALUE;
+    setCustomFieldVisible(input, isCustom);
+    if (isCustom) input.focus();
+    save();
+  });
+
+  input.addEventListener("input", save);
+}
+
 function bindDetails() {
-  const fields = ["homeTeam", "awayTeam", "date", "time", "venue", "competition"];
-  fields.forEach((field) => {
+  bindChoiceField(els.homeTeamSelect, els.homeTeamCustom, TEAMS, "homeTeam", { required: true });
+  bindChoiceField(els.awayTeamSelect, els.awayTeamCustom, TEAMS, "awayTeam", { required: true });
+  bindChoiceField(els.competitionSelect, els.competitionCustom, COMPETITIONS, "competition");
+
+  ["date", "time", "venue"].forEach((field) => {
     els[field].value = state.details[field] || "";
     els[field].addEventListener("input", () => {
       state.details[field] = els[field].value;
@@ -45,6 +145,15 @@ function bindDetails() {
       updateStartButton();
     });
   });
+}
+
+function syncDetailsFromState() {
+  syncChoiceField(els.homeTeamSelect, els.homeTeamCustom, TEAMS, "homeTeam");
+  syncChoiceField(els.awayTeamSelect, els.awayTeamCustom, TEAMS, "awayTeam");
+  syncChoiceField(els.competitionSelect, els.competitionCustom, COMPETITIONS, "competition");
+  els.date.value = state.details.date || "";
+  els.time.value = state.details.time || "";
+  els.venue.value = state.details.venue || "";
 }
 
 function renderRoster(teamKey) {
@@ -206,7 +315,7 @@ els.newGame.addEventListener("click", () => {
   if (confirm("Start a new game? All current data will be cleared.")) {
     clearState();
     state = loadState();
-    bindDetails();
+    syncDetailsFromState();
     renderRoster("home");
     renderRoster("away");
     updateStartButton();

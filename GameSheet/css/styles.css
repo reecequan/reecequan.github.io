@@ -147,6 +147,10 @@ input[type="time"] {
   min-width: 9rem;
 }
 
+.field-select-custom input[type="text"] {
+  margin-top: 0.35rem;
+}
+
 input:focus,
 select:focus {
   outline: 2px solid var(--accent);

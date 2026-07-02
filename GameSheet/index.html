@@ -16,13 +16,15 @@
     <section class="card">
       <h2>Game Details</h2>
       <div class="grid-2">
-        <label class="field">
+        <label class="field field-select-custom">
           <span>Home Team</span>
-          <input type="text" id="homeTeam" required placeholder="Home team name">
+          <select id="homeTeamSelect" required></select>
+          <input type="text" id="homeTeamCustom" placeholder="Enter team name" hidden disabled>
         </label>
-        <label class="field">
+        <label class="field field-select-custom">
           <span>Away Team</span>
-          <input type="text" id="awayTeam" required placeholder="Away team name">
+          <select id="awayTeamSelect" required></select>
+          <input type="text" id="awayTeamCustom" placeholder="Enter team name" hidden disabled>
         </label>
         <label class="field">
           <span>Date</span>
@@ -36,9 +38,10 @@
           <span>Venue</span>
           <input type="text" id="venue" placeholder="Arena / venue">
         </label>
-        <label class="field">
+        <label class="field field-select-custom">
           <span>Competition</span>
-          <input type="text" id="competition" placeholder="League / competition">
+          <select id="competitionSelect"></select>
+          <input type="text" id="competitionCustom" placeholder="Enter competition" hidden disabled>
         </label>
       </div>
     </section>
