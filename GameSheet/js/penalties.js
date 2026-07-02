@@ -67,6 +67,31 @@ export function toGameTime(period, time, clockDirection = "down") {
   return secondsToTime(periodOffsetSecs + elapsedInPeriod);
 }
 
+/** Convert cumulative game time back to period and arena clock. */
+export function fromGameTime(gameTime, clockDirection = "down") {
+  const totalSecs = timeToSeconds(gameTime);
+  const periodLengthSecs = PERIOD_LENGTH_MINUTES * 60;
+  const otStartSecs = 3 * periodLengthSecs;
+
+  let period;
+  let elapsedInPeriod;
+
+  if (totalSecs >= otStartSecs) {
+    period = "OT";
+    elapsedInPeriod = totalSecs - otStartSecs;
+  } else {
+    const periodIndex = Math.floor(totalSecs / periodLengthSecs);
+    period = periodIndex + 1;
+    elapsedInPeriod = totalSecs % periodLengthSecs;
+  }
+
+  const arenaSecs = clockDirection === "down"
+    ? periodLengthSecs - elapsedInPeriod
+    : elapsedInPeriod;
+
+  return { period, time: secondsToTime(arenaSecs) };
+}
+
 function createActivePenalty(event) {
   const segments = event.duration === "2+2" ? 2 : 1;
 
@@ -147,8 +172,56 @@ export function calculatePenaltyExpiry(active, clockDirection) {
 function syncPenaltyRecord(penRecord, active) {
   penRecord.startTime = active.segmentStartTime;
   penRecord.startPeriod = active.segmentPeriod;
-  if (active.terminated && active.endTime) {
+  if (active.terminated && active.endTime && !penRecord.endTime) {
     penRecord.endTime = active.endTime;
+    penRecord.endPeriod = active.endPeriod;
+  }
+}
+
+function advancePenaltySegment(active, penRecord, expiryGameTime, clockDirection) {
+  const { period, time } = fromGameTime(expiryGameTime, clockDirection);
+  active.segmentStartTime = time;
+  active.segmentPeriod = period;
+  if (penRecord) {
+    penRecord.startTime = time;
+    penRecord.startPeriod = period;
+  }
+}
+
+function expirePenaltiesByTime(activePenalties, eventPeriod, eventTime, clockDirection, penalties) {
+  const eventGameSeconds = timeToSeconds(toGameTime(eventPeriod, eventTime, clockDirection));
+
+  for (const active of activePenalties) {
+    if (active.terminated) continue;
+
+    while (!active.terminated) {
+      const expiryGameTime = calculatePenaltyExpiry(active, clockDirection);
+      const expiryGameSeconds = timeToSeconds(expiryGameTime);
+      if (eventGameSeconds < expiryGameSeconds) break;
+
+      const penRecord = penalties.find((p) => p.id === active.eventId);
+      const { period: expiryPeriod, time: expiryArenaTime } = fromGameTime(expiryGameTime, clockDirection);
+
+      if (active.duration === "2+2" && active.segmentsRemaining === 2) {
+        active.segmentsRemaining = 1;
+        advancePenaltySegment(active, penRecord, expiryGameTime, clockDirection);
+        continue;
+      }
+
+      if (active.duration === "2+10" && active.minorActive) {
+        active.minorActive = false;
+        advancePenaltySegment(active, penRecord, expiryGameTime, clockDirection);
+        continue;
+      }
+
+      terminatePenalty(active, expiryArenaTime);
+      active.endPeriod = expiryPeriod;
+      if (penRecord) {
+        penRecord.endTime = expiryGameTime;
+        penRecord.endIsGameTime = true;
+        penRecord.endPeriod = expiryPeriod;
+      }
+    }
   }
 }
 
@@ -243,6 +316,8 @@ export function computeGameStats(state, options = {}) {
   const activePenalties = [];
 
   for (const event of sortedEvents) {
+    expirePenaltiesByTime(activePenalties, event.period, event.time, clockDirection, penalties);
+
     const pi = periodIndex(event.period);
 
     if (event.type === "penalty") {

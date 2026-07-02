@@ -2,6 +2,8 @@ import {
   computeGameStats,
   computeNetminderStats,
   getPenaltyPim,
+  getActivePenaltiesAtEvent,
+  suggestGoalType,
   toGameTime,
   splitArenaTime,
   joinArenaTime
@@ -79,6 +81,49 @@ const openPenState = {
 const finalized = computeGameStats(openPenState, { finalizePenalties: true });
 assert(finalized.penalties[0].endIsGameTime === true, "finalized end is game time");
 assert(finalized.penalties[0].endTime === "7:00", "2 min pen at 15:00 countdown ends at 7:00 game time");
+
+const expiredPenState = {
+  details: { homeTeam: "H", awayTeam: "A" },
+  home: {
+    players: [{ id: "h1", number: 9, name: "Scorer", role: "skater" }],
+    startingGoalieId: null
+  },
+  away: {
+    players: [{ id: "a1", number: 4, name: "Penalized", role: "skater" }],
+    startingGoalieId: null
+  },
+  settings: { period: 1, clockDirection: "up" },
+  events: [
+    {
+      id: "p1",
+      type: "penalty",
+      team: "home",
+      period: 1,
+      time: "0:03",
+      playerId: "h1",
+      offence: "HOOK",
+      duration: "2",
+      coincidental: false
+    },
+    {
+      id: "g1",
+      type: "goal",
+      team: "away",
+      period: 1,
+      time: "6:03",
+      scorerId: "a1",
+      assistIds: [],
+      goalType: "E"
+    }
+  ]
+};
+
+const expiredStats = computeGameStats(expiredPenState);
+assert(expiredStats.penalties[0].endTime === "2:03", "2 min pen at 0:03 expires at 2:03 game time");
+assert(expiredStats.penalties[0].endIsGameTime === true, "time expiry uses game time");
+const activeAtGoal = getActivePenaltiesAtEvent(expiredPenState);
+assert(activeAtGoal.length === 0, "penalty no longer active when goal scored at 6:03");
+assert(suggestGoalType(activeAtGoal, "away") === "E", "goal at 6:03 is even strength after pen expired");
 
 const netminderState = {
   details: { homeTeam: "H", awayTeam: "A" },
