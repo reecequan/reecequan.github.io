@@ -68,16 +68,20 @@ function teamPlayers(team, includeGoalies = true) {
   return sortPlayers(players);
 }
 
-function populateSelect(select, team, { includeGoalies = true, allowEmpty = false } = {}) {
+function populateSelect(select, team, { includeGoalies = true, allowEmpty = false, excludeIds = [] } = {}) {
   const current = select.value;
+  const exclude = new Set(excludeIds);
   select.innerHTML = allowEmpty ? '<option value="">—</option>' : "";
-  teamPlayers(team, includeGoalies).forEach((p) => {
-    const opt = document.createElement("option");
-    opt.value = p.id;
-    opt.textContent = formatPlayerOption(p);
-    select.appendChild(opt);
-  });
-  if (current) select.value = current;
+  teamPlayers(team, includeGoalies)
+    .filter((p) => !exclude.has(p.id))
+    .forEach((p) => {
+      const opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = formatPlayerOption(p);
+      select.appendChild(opt);
+    });
+  const hasCurrent = current && !exclude.has(current) && [...select.options].some((o) => o.value === current);
+  select.value = hasCurrent ? current : allowEmpty ? "" : select.options[0]?.value || "";
 }
 
 function getGoalies(teamKey) {
@@ -108,14 +112,33 @@ function closeAllModals() {
   closeModal(els.swapModal);
 }
 
+function syncGoalAssistOptions(team) {
+  const scorerSelect = document.getElementById("goalScorer");
+  const assist1Select = document.getElementById("goalAssist1");
+  const assist2Select = document.getElementById("goalAssist2");
+  const scorerId = scorerSelect.value;
+
+  populateSelect(assist1Select, team, {
+    includeGoalies: true,
+    allowEmpty: true,
+    excludeIds: scorerId ? [scorerId] : []
+  });
+
+  const assist1Id = assist1Select.value;
+  populateSelect(assist2Select, team, {
+    includeGoalies: true,
+    allowEmpty: true,
+    excludeIds: [scorerId, assist1Id].filter(Boolean)
+  });
+}
+
 function refreshGoalDropdowns(team) {
   populateSelect(document.getElementById("goalScorer"), team, { includeGoalies: false });
-  populateSelect(document.getElementById("goalAssist1"), team, { includeGoalies: false, allowEmpty: true });
-  populateSelect(document.getElementById("goalAssist2"), team, { includeGoalies: false, allowEmpty: true });
+  syncGoalAssistOptions(team);
 }
 
 function refreshPenaltyDropdowns(team) {
-  populateSelect(document.getElementById("penaltyPlayer"), team, { includeGoalies: false, allowEmpty: true });
+  populateSelect(document.getElementById("penaltyPlayer"), team, { includeGoalies: true, allowEmpty: true });
   const isBench = document.getElementById("penaltyOffence").value === "BENCH";
   document.getElementById("penaltyPlayer").disabled = isBench;
 }
@@ -232,6 +255,14 @@ function initPage() {
 
   document.getElementById("penaltyOffence").addEventListener("change", () => {
     if (activeTeam) refreshPenaltyDropdowns(activeTeam);
+  });
+
+  document.getElementById("goalScorer").addEventListener("change", () => {
+    if (activeTeam) syncGoalAssistOptions(activeTeam);
+  });
+
+  document.getElementById("goalAssist1").addEventListener("change", () => {
+    if (activeTeam) syncGoalAssistOptions(activeTeam);
   });
 
   document.querySelectorAll("[data-close]").forEach((btn) => {
@@ -392,11 +423,15 @@ els.goalForm.addEventListener("submit", (e) => {
     return;
   }
   if (assist1 && assist1 === scorerId) {
-    els.goalError.textContent = "Assists must be different from the scorer.";
+    els.goalError.textContent = "A player cannot assist their own goal.";
     return;
   }
-  if (assist2 && (assist2 === scorerId || assist2 === assist1)) {
-    els.goalError.textContent = "Assists must be unique.";
+  if (assist2 && assist2 === scorerId) {
+    els.goalError.textContent = "A player cannot assist their own goal.";
+    return;
+  }
+  if (assist1 && assist2 && assist2 === assist1) {
+    els.goalError.textContent = "Assist 2 must be a different player from Assist 1.";
     return;
   }
 
@@ -496,7 +531,9 @@ els.eventLog.addEventListener("click", (e) => {
       els.goalSubmitBtn.textContent = "Save Goal";
       refreshGoalDropdowns(event.team);
       document.getElementById("goalScorer").value = event.scorerId;
+      syncGoalAssistOptions(event.team);
       document.getElementById("goalAssist1").value = event.assistIds?.[0] || "";
+      syncGoalAssistOptions(event.team);
       document.getElementById("goalAssist2").value = event.assistIds?.[1] || "";
       document.getElementById("goalType").value = event.goalType || "E";
       openModal(els.goalModal);
