@@ -1,0 +1,337 @@
+@page {
+  size: A4 landscape;
+  margin: 5mm;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body.sheet-page {
+  margin: 0;
+  background: #e8e8e8;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 8pt;
+  color: #000;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.sheet-toolbar {
+  width: 297mm;
+  margin: 0 auto;
+  padding: 12px 0;
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  font: inherit;
+  font-weight: 600;
+  border: 1px solid #333;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #1a4d8f;
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #6c757d;
+}
+
+/* Fixed A4 width — never squash on screen preview */
+.sheet-container {
+  width: 297mm;
+  min-width: 297mm;
+  margin: 0 auto;
+  padding: 4mm 5mm 5mm;
+  background: #fff;
+}
+
+.sheet-title {
+  margin: 0 0 2mm;
+  text-align: center;
+  font-size: 12pt;
+  font-weight: 700;
+}
+
+.sheet-layout {
+  display: grid;
+  grid-template-columns: 1fr 19%;
+  align-items: stretch;
+  border: 1.5px solid #000;
+}
+
+.sheet-main {
+  border-right: 1.5px solid #000;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.team-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.team-table + .team-table {
+  border-top: 1.5px solid #000;
+}
+
+/* Column widths — PLAYER ~29% per template proportions, boosted for readability */
+.w-num      { width: 3.5%; }
+.w-player   { width: 29%; }
+.w-stat     { width: 3.3%; }
+.w-sno      { width: 3.5%; }
+.w-stime    { width: 5%; }
+.w-stype    { width: 3.5%; }
+.w-jersey   { width: 3%; }
+.w-pno      { width: 3.5%; }
+.w-pim      { width: 3.5%; }
+.w-offence  { width: 12%; }
+.w-pgiven   { width: 4.5%; }
+.w-ptime    { width: 4.8%; }
+
+.team-table th,
+.team-table td {
+  border: 0.5px solid #000;
+  padding: 1px 2px;
+  text-align: center;
+  vertical-align: middle;
+  min-height: 15px;
+  line-height: 1.2;
+  font-size: 7.5pt;
+}
+
+.team-table tbody td {
+  height: 15px;
+}
+
+.team-table tbody td.player-col {
+  height: auto;
+  min-height: 15px;
+}
+
+.team-table .section-title th {
+  height: 17px;
+  padding: 1px 4px;
+  font-size: 8pt;
+  font-weight: 700;
+  text-align: left;
+  background: #fff;
+}
+
+.team-table .section-title th:nth-child(2),
+.team-table .section-title th:nth-child(3) {
+  text-align: center;
+}
+
+.team-table .sub-title th {
+  height: 15px;
+  font-weight: 400;
+  font-size: 7pt;
+  text-align: left;
+}
+
+.team-table .sub-title .times-label {
+  text-align: center;
+  font-weight: 700;
+}
+
+.team-table .sig-cell {
+  font-style: italic;
+}
+
+.team-table .col-headers th {
+  font-weight: 700;
+  font-size: 7pt;
+  height: 16px;
+}
+
+/* Player names: left-aligned, full text visible */
+.team-table td.player-col,
+.team-table th.player-col {
+  text-align: left;
+  padding-left: 3px;
+  padding-right: 2px;
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+  font-size: 7.5pt;
+  line-height: 1.15;
+}
+
+.team-table td.offence-col {
+  font-size: 6.5pt;
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+  line-height: 1.1;
+}
+
+/* Numeric / time cells stay compact */
+.team-table td:not(.player-col):not(.offence-col) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.sheet-sidebar {
+  width: 100%;
+  min-width: 50mm;
+  display: grid;
+  grid-template-rows: minmax(0, 1.3fr) auto auto auto minmax(0, 1fr);
+  font-size: 7pt;
+}
+
+.side-panel {
+  border-bottom: 0.5px solid #000;
+  padding: 3px 4px;
+}
+
+.side-panel:last-child {
+  border-bottom: none;
+}
+
+.side-panel h2 {
+  margin: 0 0 4px;
+  font-size: 7pt;
+  font-weight: 700;
+}
+
+.detail-line {
+  display: grid;
+  grid-template-columns: 18mm 1fr;
+  gap: 1px;
+  margin-bottom: 4px;
+  align-items: end;
+  font-size: 7pt;
+  line-height: 1.2;
+}
+
+.detail-line span:first-child {
+  font-weight: 600;
+}
+
+.detail-line span:last-child {
+  border-bottom: 0.5px solid #000;
+  min-height: 13px;
+  padding-bottom: 1px;
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+}
+
+.side-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 7pt;
+}
+
+.side-table th,
+.side-table td {
+  border: 0.5px solid #000;
+  padding: 2px;
+  text-align: center;
+  height: 14px;
+}
+
+.side-table th {
+  font-weight: 700;
+  font-size: 6.5pt;
+}
+
+.side-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+}
+
+.netminder-table .name-col {
+  text-align: left;
+  white-space: normal;
+  word-break: break-word;
+  font-size: 6.5pt;
+}
+
+.official-line {
+  display: grid;
+  grid-template-columns: 20mm 1fr;
+  gap: 2px;
+  margin-bottom: 5px;
+  font-size: 6.5pt;
+  align-items: end;
+}
+
+.official-line.attendance {
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+.official-sig {
+  border-bottom: 0.5px solid #000;
+  min-height: 12px;
+}
+
+.sheet-footer {
+  margin-top: 2mm;
+  text-align: center;
+  font-size: 7pt;
+}
+
+@media screen {
+  body.sheet-page {
+    overflow-x: auto;
+  }
+}
+
+@media print {
+  body.sheet-page {
+    background: #fff;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .sheet-container {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .sheet-layout {
+    grid-template-columns: 1fr 19%;
+    width: 100%;
+  }
+
+  .sheet-main {
+    width: auto;
+  }
+
+  .team-table {
+    width: 100%;
+  }
+
+  .team-table th,
+  .team-table td {
+    min-height: 14px;
+    font-size: 7.5pt;
+  }
+
+  .team-table tbody td {
+    height: 14px;
+  }
+
+  .team-table tbody td.player-col {
+    height: auto;
+    font-size: 7.5pt;
+  }
+
+  .sheet-layout {
+    page-break-inside: avoid;
+  }
+}

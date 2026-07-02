@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Sheet — Live Game</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <header class="page-header">
+      <h1>Live Game</h1>
+      <p>Set the period and arena clock at the top, then tap a team button to log a goal or penalty.</p>
+    </header>
+
+    <div class="scoreboard card">
+      <div class="team-score home">
+        <div class="name" id="homeName">Home</div>
+        <div class="score" id="homeScore">0</div>
+      </div>
+      <div class="game-controls">
+        <label class="field">
+          <span>Period</span>
+          <select id="period">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="OT">OT</option>
+          </select>
+        </label>
+        <label class="field field-clock">
+          <span>Time (MM:SS)</span>
+          <div class="clock-input">
+            <input type="number" id="gameMinutes" min="0" max="20" placeholder="MM" inputmode="numeric" required>
+            <span class="clock-sep">:</span>
+            <input type="number" id="gameSeconds" min="0" max="59" placeholder="SS" inputmode="numeric" required>
+          </div>
+        </label>
+        <label class="field">
+          <span>Clock</span>
+          <select id="clockDirection">
+            <option value="down">Counting down</option>
+            <option value="up">Counting up</option>
+          </select>
+        </label>
+      </div>
+      <div class="team-score away">
+        <div class="name" id="awayName">Away</div>
+        <div class="score" id="awayScore">0</div>
+      </div>
+    </div>
+
+    <div id="editBanner" class="edit-banner" hidden>
+      <span>Editing event — save or cancel.</span>
+      <button type="button" id="cancelEdit" class="btn btn-small btn-secondary">Cancel Edit</button>
+    </div>
+
+    <section class="action-buttons card">
+      <div class="action-buttons-grid">
+        <button type="button" id="homeGoalBtn" class="action-btn home goal-btn">Home — Goal</button>
+        <button type="button" id="homePenBtn" class="action-btn home pen-btn">Home — Pen</button>
+        <button type="button" id="awayGoalBtn" class="action-btn away goal-btn">Away — Goal</button>
+        <button type="button" id="awayPenBtn" class="action-btn away pen-btn">Away — Pen</button>
+      </div>
+      <p class="secondary-action">
+        <button type="button" id="openSwapBtn" class="link-btn">Log goalie swap</button>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Event Log</h2>
+      <div id="eventLog"></div>
+    </section>
+
+    <div class="actions-bar no-print">
+      <button type="button" id="completeGame" class="btn">Complete Game</button>
+      <button type="button" id="backToSetup" class="btn btn-secondary">Back to Setup</button>
+    </div>
+  </div>
+
+  <!-- Goal modal -->
+  <div id="goalModal" class="modal-overlay" hidden>
+    <div class="modal modal-wide">
+      <h3 id="goalModalTitle">Log Goal</h3>
+      <form id="goalForm" class="log-form">
+        <div class="form-grid">
+          <label class="field">
+            <span>Scorer</span>
+            <select id="goalScorer" required></select>
+          </label>
+          <label class="field">
+            <span>Assist 1</span>
+            <select id="goalAssist1"></select>
+          </label>
+          <label class="field">
+            <span>Assist 2</span>
+            <select id="goalAssist2"></select>
+          </label>
+          <label class="field">
+            <span>Goal Type</span>
+            <select id="goalType"></select>
+          </label>
+        </div>
+        <p class="form-error" id="goalError"></p>
+        <div class="modal-actions">
+          <button type="submit" class="btn" id="goalSubmitBtn">Log Goal</button>
+          <button type="button" class="btn btn-secondary" data-close="goalModal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Penalty modal -->
+  <div id="penaltyModal" class="modal-overlay" hidden>
+    <div class="modal modal-wide">
+      <h3 id="penaltyModalTitle">Log Penalty</h3>
+      <form id="penaltyForm" class="log-form">
+        <div class="form-grid">
+          <label class="field">
+            <span>Player</span>
+            <select id="penaltyPlayer"></select>
+          </label>
+          <label class="field">
+            <span>Offence</span>
+            <select id="penaltyOffence"></select>
+          </label>
+          <label class="field">
+            <span>Duration</span>
+            <select id="penaltyDuration"></select>
+          </label>
+          <label class="field field-checkbox">
+            <input type="checkbox" id="penaltyCoincidental">
+            <span>Coincidental</span>
+          </label>
+        </div>
+        <p class="form-error" id="penaltyError"></p>
+        <div class="modal-actions">
+          <button type="submit" class="btn" id="penaltySubmitBtn">Log Penalty</button>
+          <button type="button" class="btn btn-secondary" data-close="penaltyModal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Goalie swap modal -->
+  <div id="swapModal" class="modal-overlay" hidden>
+    <div class="modal">
+      <h3 id="swapModalTitle">Log Goalie Swap</h3>
+      <form id="swapForm" class="log-form">
+        <label class="field">
+          <span>Team</span>
+          <select id="swapTeam"></select>
+        </label>
+        <label class="field">
+          <span>Goalie In</span>
+          <select id="swapGoalie" required></select>
+        </label>
+        <p class="form-error" id="swapError"></p>
+        <div class="modal-actions">
+          <button type="submit" class="btn" id="swapSubmitBtn">Log Swap</button>
+          <button type="button" class="btn btn-secondary" data-close="swapModal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="js/game.js"></script>
+</body>
+</html>

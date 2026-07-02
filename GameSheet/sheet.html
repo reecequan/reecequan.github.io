@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Sheet — Print</title>
+  <link rel="stylesheet" href="css/sheet.css">
+</head>
+<body class="sheet-page">
+  <div class="sheet-toolbar no-print">
+    <button type="button" id="printBtn" class="btn">Print Game Sheet</button>
+    <button type="button" id="backToGame" class="btn btn-secondary">Back to Game</button>
+  </div>
+
+  <div class="sheet-container">
+    <h1 class="sheet-title">EIHA Rec. Section Official Game Sheet</h1>
+
+    <div class="sheet-layout">
+      <div class="sheet-main">
+        <!-- HOME TEAM -->
+        <table class="team-table" id="homeTable">
+          <colgroup>
+            <col class="w-num">
+            <col class="w-player">
+            <col class="w-stat"><col class="w-stat"><col class="w-stat">
+            <col class="w-sno"><col class="w-stime"><col class="w-stype">
+            <col class="w-jersey"><col class="w-jersey"><col class="w-jersey">
+            <col class="w-pno"><col class="w-pim"><col class="w-offence">
+            <col class="w-pgiven"><col class="w-ptime"><col class="w-ptime">
+          </colgroup>
+          <thead>
+            <tr class="section-title">
+              <th colspan="5">HOME TEAM</th>
+              <th colspan="6">Scoring &mdash; HOME</th>
+              <th colspan="6">Penalties &mdash; HOME</th>
+            </tr>
+            <tr class="sub-title">
+              <th colspan="5" class="sig-cell">Captains Signature</th>
+              <th colspan="6"></th>
+              <th colspan="6" class="times-label">Times</th>
+            </tr>
+            <tr class="col-headers">
+              <th>No.</th>
+              <th class="player-col">PLAYER</th>
+              <th>G</th>
+              <th>A</th>
+              <th>PM</th>
+              <th>No</th>
+              <th>Time</th>
+              <th>Type</th>
+              <th>G</th>
+              <th>A</th>
+              <th>A</th>
+              <th>No.</th>
+              <th>PIM</th>
+              <th class="offence-col">Offence</th>
+              <th>Given</th>
+              <th>Start</th>
+              <th>End</th>
+            </tr>
+          </thead>
+          <tbody id="homeBody"></tbody>
+        </table>
+
+        <!-- AWAY TEAM -->
+        <table class="team-table" id="awayTable">
+          <colgroup>
+            <col class="w-num">
+            <col class="w-player">
+            <col class="w-stat"><col class="w-stat"><col class="w-stat">
+            <col class="w-sno"><col class="w-stime"><col class="w-stype">
+            <col class="w-jersey"><col class="w-jersey"><col class="w-jersey">
+            <col class="w-pno"><col class="w-pim"><col class="w-offence">
+            <col class="w-pgiven"><col class="w-ptime"><col class="w-ptime">
+          </colgroup>
+          <thead>
+            <tr class="section-title">
+              <th colspan="5">AWAY TEAM</th>
+              <th colspan="6">Scoring &mdash; AWAY</th>
+              <th colspan="6">Penalties &mdash; AWAY</th>
+            </tr>
+            <tr class="sub-title">
+              <th colspan="5" class="sig-cell">Captains Signature</th>
+              <th colspan="6"></th>
+              <th colspan="6" class="times-label">Times</th>
+            </tr>
+            <tr class="col-headers">
+              <th>No.</th>
+              <th class="player-col">PLAYER</th>
+              <th>G</th>
+              <th>A</th>
+              <th>PM</th>
+              <th>No</th>
+              <th>Time</th>
+              <th>Type</th>
+              <th>G</th>
+              <th>A</th>
+              <th>A</th>
+              <th>No.</th>
+              <th>PIM</th>
+              <th class="offence-col">Offence</th>
+              <th>Given</th>
+              <th>Start</th>
+              <th>End</th>
+            </tr>
+          </thead>
+          <tbody id="awayBody"></tbody>
+        </table>
+      </div>
+
+      <aside class="sheet-sidebar">
+        <section class="side-panel game-details">
+          <h2>GAME DETAILS</h2>
+          <div class="detail-line"><span>Home Team:</span><span id="detailHome"></span></div>
+          <div class="detail-line"><span>Away Team:</span><span id="detailAway"></span></div>
+          <div class="detail-line"><span>DATE:</span><span id="detailDate"></span></div>
+          <div class="detail-line"><span>TIME:</span><span id="detailTime"></span></div>
+          <div class="detail-line"><span>VENUE:</span><span id="detailVenue"></span></div>
+          <div class="detail-line"><span>Competition:</span><span id="detailComp"></span></div>
+        </section>
+
+        <section class="side-panel">
+          <h2>Period Scores</h2>
+          <table class="side-table">
+            <thead>
+              <tr><th></th><th>1</th><th>2</th><th>3</th><th>OT</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Home</td>
+                <td id="homeScoreP1"></td>
+                <td id="homeScoreP2"></td>
+                <td id="homeScoreP3"></td>
+                <td id="homeScoreOT"></td>
+                <td id="homeScoreTotal"></td>
+              </tr>
+              <tr>
+                <td>Away</td>
+                <td id="awayScoreP1"></td>
+                <td id="awayScoreP2"></td>
+                <td id="awayScoreP3"></td>
+                <td id="awayScoreOT"></td>
+                <td id="awayScoreTotal"></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="side-panel">
+          <h2>Penalty Minutes</h2>
+          <table class="side-table">
+            <thead>
+              <tr><th></th><th>1</th><th>2</th><th>3</th><th>OT</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Home</td>
+                <td id="homePimP1"></td>
+                <td id="homePimP2"></td>
+                <td id="homePimP3"></td>
+                <td id="homePimOT"></td>
+                <td id="homePimTotal"></td>
+              </tr>
+              <tr>
+                <td>Away</td>
+                <td id="awayPimP1"></td>
+                <td id="awayPimP2"></td>
+                <td id="awayPimP3"></td>
+                <td id="awayPimOT"></td>
+                <td id="awayPimTotal"></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="side-panel netminder-panel">
+          <h2>NETMINDERS &mdash; Goals Conceded</h2>
+          <table class="side-table netminder-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Time On</th>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>OT</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="netminderBody"></tbody>
+          </table>
+        </section>
+
+        <section class="side-panel officials-panel">
+          <h2>Officials</h2>
+          <div class="official-line"><span>Referee</span><span class="official-sig"></span></div>
+          <div class="official-line"><span>Signature</span><span class="official-sig"></span></div>
+          <div class="official-line"><span>Linesman:</span><span class="official-sig"></span></div>
+          <div class="official-line"><span>Linesman:</span><span class="official-sig"></span></div>
+          <div class="official-line"><span>Scorer:</span><span class="official-sig"></span></div>
+          <div class="official-line"><span>Time Keeper:</span><span class="official-sig"></span></div>
+          <div class="official-line"><span>Goal Judge:</span><span class="official-sig"></span></div>
+          <div class="official-line"><span>Goal Judge:</span><span class="official-sig"></span></div>
+          <div class="official-line attendance"><span>ATTENDANCE</span><span class="official-sig"></span></div>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="sheet-footer">Send to &mdash; tony.wood@eiharec.co.uk</footer>
+  </div>
+
+  <script type="module" src="js/sheet.js"></script>
+</body>
+</html>

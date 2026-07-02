@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Sheet — Roster Setup</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <header class="page-header">
+      <h1>Digital Game Sheet</h1>
+      <p>Add rosters and game details, then start the game.</p>
+    </header>
+
+    <section class="card">
+      <h2>Game Details</h2>
+      <div class="grid-2">
+        <label class="field">
+          <span>Home Team</span>
+          <input type="text" id="homeTeam" required placeholder="Home team name">
+        </label>
+        <label class="field">
+          <span>Away Team</span>
+          <input type="text" id="awayTeam" required placeholder="Away team name">
+        </label>
+        <label class="field">
+          <span>Date</span>
+          <input type="date" id="date">
+        </label>
+        <label class="field">
+          <span>Time</span>
+          <input type="time" id="time">
+        </label>
+        <label class="field">
+          <span>Venue</span>
+          <input type="text" id="venue" placeholder="Arena / venue">
+        </label>
+        <label class="field">
+          <span>Competition</span>
+          <input type="text" id="competition" placeholder="League / competition">
+        </label>
+      </div>
+    </section>
+
+    <div class="grid-2">
+      <section class="card home">
+        <h2>Home Team Roster</h2>
+        <p class="roster-counts" id="homeCounts">0/22 skaters, 0/3 goalies</p>
+        <form id="homeForm" class="form-row">
+          <label class="field">
+            <span>#</span>
+            <input type="number" name="number" min="0" max="99" required placeholder="No.">
+          </label>
+          <label class="field">
+            <span>Name</span>
+            <input type="text" name="name" required placeholder="Player name">
+          </label>
+          <label class="field">
+            <span>Role</span>
+            <select name="role">
+              <option value="skater">Skater</option>
+              <option value="goalie">Goalie</option>
+            </select>
+          </label>
+          <button type="submit" class="btn">Add Player</button>
+        </form>
+        <p class="form-error" id="homeError"></p>
+        <div id="homeRoster"></div>
+      </section>
+
+      <section class="card away">
+        <h2>Away Team Roster</h2>
+        <p class="roster-counts" id="awayCounts">0/22 skaters, 0/3 goalies</p>
+        <form id="awayForm" class="form-row">
+          <label class="field">
+            <span>#</span>
+            <input type="number" name="number" min="0" max="99" required placeholder="No.">
+          </label>
+          <label class="field">
+            <span>Name</span>
+            <input type="text" name="name" required placeholder="Player name">
+          </label>
+          <label class="field">
+            <span>Role</span>
+            <select name="role">
+              <option value="skater">Skater</option>
+              <option value="goalie">Goalie</option>
+            </select>
+          </label>
+          <button type="submit" class="btn">Add Player</button>
+        </form>
+        <p class="form-error" id="awayError"></p>
+        <div id="awayRoster"></div>
+      </section>
+    </div>
+
+    <div class="actions-bar">
+      <button type="button" id="startGame" class="btn" disabled>Start Game</button>
+      <button type="button" id="newGame" class="btn btn-secondary">New Game</button>
+    </div>
+  </div>
+
+  <div id="goalieModal" class="modal-overlay" hidden>
+    <div class="modal">
+      <h3>Select Starting Goalies</h3>
+      <div id="goalieModalBody"></div>
+      <div class="modal-actions">
+        <button type="button" id="confirmGoalies" class="btn">Start Game</button>
+        <button type="button" id="cancelGoalies" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/roster-page.js"></script>
+</body>
+</html>

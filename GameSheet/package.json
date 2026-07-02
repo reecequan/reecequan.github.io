@@ -1,0 +1,6 @@
+{
+  "name": "gamesheet",
+  "private": true,
+  "type": "module",
+  "description": "Digital EIHA ice hockey game sheet"
+}
